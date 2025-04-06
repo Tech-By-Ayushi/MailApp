@@ -1,20 +1,52 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../utils/api";
 import { Mail } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login({ setUserId }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const login = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/login", {
+      const res = await axios.post("/api/auth/login", {
         email,
         password,
       });
-      setUserId(res.data.userId);
-    } catch (err) {
-      alert("Login failed");
+
+      console.log(res.data)
+      // storing the token in localStorage
+      sessionStorage.setItem('token', res.data.token);
+      sessionStorage.setItem('username', res.data.username);
+      if (res.status === 200) {
+
+        try {
+          setUserId(res.data.userId);
+        } catch (err) {
+          console.error(err.message);
+        }
+
+        alert("Login Successful");
+        navigate('/mails');
+      }
+
+    }
+    catch (error) {
+
+      if (error.response) {
+        // The server responded with a status code outside the range of 2xx
+        console.error('Error from backend:', error.response.data.error);  // Access the error message
+        alert(error.response.data.error);
+      }
+      else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response from backend:', error.request);
+      }
+      else {
+        // Something else triggered an error (e.g., in setting up the request)
+        console.error('Error in request:', error.message);
+      }
     }
   };
 
@@ -55,7 +87,7 @@ export default function Login({ setUserId }) {
         <p className="text-sm text-gray-600 mt-6">
           Don’t have an account?{" "}
           <span className="text-blue-600 hover:underline cursor-pointer">
-            Register
+            <a href="/register"> Register </a>
           </span>
         </p>
       </div>
