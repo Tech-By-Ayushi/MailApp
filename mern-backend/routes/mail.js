@@ -1,28 +1,81 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const Mail = require("../models/Mail");
+const Mail = require("../model/Mail.model.js");
+const { authMiddleware } = require('../middleware/auth.middleware.js');
+const User = require('../model/User.model.js');
 
-const router = express.Router();
-const JWT_SECRET = "supersecretkey"; // Hardcoded
+const mailRouter = express.Router();
 
-// Auth middleware
-function authMiddleware(req, res, next) {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch {
-        res.status(403).json({ error: "Invalid token" });
-    }
-}
 
-// GET /api/mails
-router.get("/", authMiddleware, async (req, res) => {
+// GET /api/mails/
+mailRouter.get("/", authMiddleware, async (req, res) => {
+
+    const user = req.user;
+    console.log(user)
+
     const mails = await Mail.find({ userId: req.user.userId });
     res.json(mails);
 });
 
-module.exports = router;
+mailRouter.post("/send-mail", authMiddleware, async (req, res) => {
+
+    try {
+
+        const senderMail = req.user.email;
+        const recipientMail = req.body.recipient;
+        const { subject, body } = req.body;
+
+        console.log(senderMail, recipientMail);
+
+        const recipientUser = await User.findOne({ email: recipientMail });
+        const senderUser = await User.findOne({ email: senderMail });
+
+        if (!recipientUser) {
+            console.log("Recipient mail not found!");
+        }
+
+
+        const newMail = new Mail({
+            to: recipientUser._id,
+            from: senderUser._id,
+            subject: subject,
+            body: body
+        });
+
+        await newMail.save();
+
+        res.status(201).json({ message: "Message Sent" });
+    }
+    catch (error) {
+        console.log(error.message);
+        res.status(500).json({ error: error.message });
+    }
+
+});
+
+// Get mails for logged-in user
+mailRouter.get("/:userId", async (req, res) => {
+
+    const { userId } = req.params;
+
+    console.log("📬 Looking for mails of:", userId); // <-- add this
+
+    const sessions = req.app.locals.sessions;
+    if (!sessions.has(userId)) {
+        console.log("❌ Unauthorized access to mails");
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    try {
+        const mails = await Mail.find({ to: userId }); // string match
+        console.log("📦 Mails found:", mails); // <-- and this
+
+        res.status(200).json(mails);
+    } catch (err) {
+        console.error("Mail fetch error:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+module.exports = mailRouter;
