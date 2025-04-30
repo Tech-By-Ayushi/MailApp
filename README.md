@@ -109,5 +109,5 @@ Pull requests are welcome. For major changes, please open an issue first.
 
 ## 💡 Author
 
-Made with 💙 by [Ayushi](https://github.com/Tech-By-Ayushi)
+Made with 💙 by [Ayushi](https://github.com/Tech-By-Ayushi) AND [HIMANSHU]
 
