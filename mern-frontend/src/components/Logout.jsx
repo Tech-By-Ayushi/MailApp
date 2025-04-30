@@ -8,6 +8,9 @@ export default function LogoutButton() {
         // Clear session data
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('username');
+        sessionStorage.removeItem('email');
+        sessionStorage.removeItem('mailList');
+        sessionStorage.removeItem('userId');
 
         // Optionally, if you're using a token (like JWT), clear it as well:
         // localStorage.removeItem('authToken');
@@ -17,11 +20,11 @@ export default function LogoutButton() {
     };
 
     return (
-        <button
+        <div
             onClick={handleLogout}
-            className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
+            className="w-full px-4 py-2 text-left hover:bg-blue-500 "
         >
             Logout
-        </button>
+        </div>
     );
 }

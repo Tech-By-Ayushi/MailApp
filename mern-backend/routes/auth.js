@@ -65,7 +65,7 @@ authRouter.post("/login", async (req, res) => {
 
         console.log("✅ Login success for:", userId);
 
-        res.status(200).json({ userId: userId, token: token, username: user.name });
+        res.status(200).json({ userId: userId, token: token, username: user.name, email: user.email, userId: user._id });
 
     } catch (err) {
         console.error("Login error:", err);

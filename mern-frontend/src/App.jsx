@@ -16,8 +16,8 @@ function App() {
           <Route path="/" element={<Login setUserId={setUserId} />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login setUserId={setUserId} />} />
-          <Route path="/mail" element={<Mails userId={userId} />} />
-          <Route path="/mails" element={<Mails userId={userId} />} />
+          <Route path="/mail" element={<MailList userId={userId} />} />
+          <Route path="/mails" element={<MailList userId={userId} />} />
 
         </Routes>
       </Router>
