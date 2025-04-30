@@ -316,7 +316,7 @@ function ReadMail(props) {
   const { subject = "Test subject", body = "TEST BODY", time = "23", from = { name: "Unknown", email: "unknown@example.com" } } = props.mailData || {};
 
   return (
-    <div className={`${reading ? "w-1/2" : "w-1/4"} mr-2 my-2 bg-white shadow-md rounded-2xl p-6 border border-gray-200`}>
+    <div className={`${reading ? "w-1/3" : "w-1/4"} mr-2 my-2 bg-white shadow-md rounded-2xl p-6 border border-gray-200`}>
 
       {!reading ? <div className="h-full flex items-center justify-center">Open Mail</div> : <>
 
